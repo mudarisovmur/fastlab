@@ -5,11 +5,8 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
-pydantic = "*"
-uvicorn = "*"
-pytest = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.12"
