@@ -12,7 +12,7 @@ jobs: # список работ, которые будут производит�
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: "3.12"
       - name: Install pipenv
         run: python -m pip install pipenv
       - name: Pipenvlock
