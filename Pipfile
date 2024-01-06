@@ -11,6 +11,9 @@ pytest = "*"
 jinja2 = "*"
 numpy = "*"
 Pillow = "*"
+python-multipart = "*"
+app = "*"
+requests = "*"
 
 [dev-packages]
 
