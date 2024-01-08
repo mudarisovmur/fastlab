@@ -5,28 +5,17 @@
  <title>Title</title>
 </head>
 <body>
-<h2>Форма ввода данных для изображений</h2>
+<h2>Сдвиг по замкнутым прямоугольным составляющим</h2>
  <form action="image_form" enctype="multipart/form-data" method="post">
- <p>
- Имя операции <br>
- <input name="name_op" value="operation" />
- </p>
- <p>
- Введите число <br>
- <input name="number_op" type="number" value = "0" />
- </p>
  <table>
  <tr>
- <td><input type="range" id="r" name="r" value="123" oninput="x1.value=r.value" min="0" max="255" > </td>
- <td><output name="x1" for="r"> 123 </output></td>
+ Процент сдвига по осям X и Y соответственно <br>
+ <td><input type="range" id="r" name="r" value="50" oninput="x1.value=r.value" min="0" max="100" > </td>
+ <td><output name="x1" for="r"> 50 </output></td>
  </tr>
  <tr>
- <td><input type="range" id="g" name="g" value="123" oninput="x2.value=g.value" min="0" max="255" > </td>
- <td><output name="x2" for="g"> 123 </output></td>
- </tr>
- <tr>
- <td><input type="range" id="b" name="b" value="123" oninput="x3.value=b.value" min="0" max="255" > </td>
- <td><output name="x3" for="b"> 123 </output></td>
+ <td><input type="range" id="g" name="g" value="50" oninput="x2.value=g.value" min="0" max="100" > </td>
+ <td><output name="x2" for="g"> 50 </output></td>
  </tr>
  </table>
  <input name="files" type="file" multiple>
