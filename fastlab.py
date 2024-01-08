@@ -7,7 +7,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Form, File, UploadFile
-import matplotlib.pyplot as plt
 from typing import List
 import hashlib
 from PIL import ImageDraw
