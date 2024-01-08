@@ -15,8 +15,7 @@ python-multipart = "*"
 matplotlib = "*"
 app = "*"
 requests = "*"
-google.auth.transport = "*"
-google.oauth2 = "*"
+google = "*"
 
 [dev-packages]
 
