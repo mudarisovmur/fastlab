@@ -3,10 +3,16 @@ import numpy as np
 import io
 from PIL import Image
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Form, File, UploadFile
+
+# Для капчи
+from fastapi.responses import HTMLResponse
+from fastapi import Depends
+from google.auth.transport import requests
+from google.oauth2 import id_token
+
 import matplotlib.pyplot as plt
 from typing import List
 import hashlib
@@ -14,15 +20,40 @@ import hashlib
 app = FastAPI()
 
 
-@app.get("/", response_class=HTMLResponse)
-def read_root(request: Request):
-  return templates.TemplateResponse("startPage.html",{"request": request})
+#@app.get("/", response_class=HTMLResponse)
+#def read_root(request: Request):
+#  return templates.TemplateResponse("startPage.html",{"request": request})
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 # возвращаем some.html, сгенерированный из шаблона
 # передав туда одно значение something
+
+@app.get("/")
+async def get_index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.post("/")
+async def post_index(request: Request):
+    # Получение токена капчи из POST-запроса
+    token = await request.form["g-recaptcha-response"]
+
+    # Проверка токена капчи на сервере Google
+    idinfo = id_token.verify_oauth2_token(
+        token,
+        requests.Request(),
+        "6LfNj0kpAAAAAMT1G5d9G995YtljhFhs3LjKIfqb"  # Замените YOUR_SECRET_KEY на ваш ранее полученный secret key
+    )
+
+    if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+        return HTMLResponse(content="Invalid token", status_code=400)
+
+    if idinfo['aud'] != "6LfNj0kpAAAAAOT_vhcGzdK_4xds1Ikw4CK0qBbD":  # Замените YOUR_SITE_KEY на ваш ранее полученный site key
+        return HTMLResponse(content="Invalid token", status_code=400)
+
+    return HTMLResponse(content="Success")
 
 
 @app.post("/image_form", response_class=HTMLResponse)

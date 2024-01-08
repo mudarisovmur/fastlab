@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google reCAPTCHA Demo</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/style.css') }}">
+</head>
+<body>
+    <h1>Google reCAPTCHA Demo</h1>
+
+    <form method="post" action="/">
+        <div class="g-recaptcha" data-sitekey="6LfNj0kpAAAAAOT_vhcGzdK_4xds1Ikw4CK0qBbD"></div>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</body>
+</html>
