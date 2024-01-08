@@ -2,7 +2,6 @@ import numpy as np
 import io
 from PIL import Image
 from fastapi import Form, File, UploadFile
-from google.auth.transport import requests
 import matplotlib.pyplot as plt
 from typing import List
 import hashlib
