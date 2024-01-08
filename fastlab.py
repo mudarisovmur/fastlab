@@ -1,59 +1,53 @@
-import fastapi.responses
 import numpy as np
 import io
 from PIL import Image
-from fastapi import FastAPI, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from fastapi import Form, File, UploadFile
-
-# Для капчи
-from fastapi.responses import HTMLResponse
-from fastapi import Depends
 from google.auth.transport import requests
-from google.oauth2 import id_token
-
 import matplotlib.pyplot as plt
 from typing import List
 import hashlib
+from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+import requests
 
 app = FastAPI()
 
-
-#@app.get("/", response_class=HTMLResponse)
-#def read_root(request: Request):
-#  return templates.TemplateResponse("startPage.html",{"request": request})
-
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
-# возвращаем some.html, сгенерированный из шаблона
-# передав туда одно значение something
 
+# Секретные ключи для капчи
+SITE_KEY = "6Lebo0kpAAAAAMEv272IvvK5qATnIg4eMnnzy4Ik"
+SECRET_KEY = "6Lebo0kpAAAAAMfgpxjmC1coBj5nzeopx1V2a2-_"
+
+
+# Роут для отображения формы с капчей
 @app.get("/")
-async def get_index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request, "site_key": SITE_KEY})
 
 
+# Роут для обработки формы с капчей
 @app.post("/")
-async def post_index(request: Request):
-    # Получение токена капчи из POST-запроса
-    token = await request.form["g-recaptcha-response"]
+async def verify_captcha(request: Request):
+    form_data = await request.form()
+    response = form_data["g-recaptcha-response"]
 
-    # Проверка токена капчи на сервере Google
-    idinfo = id_token.verify_oauth2_token(
-        token,
-        requests.Request(),
-        "6LfNj0kpAAAAAMT1G5d9G995YtljhFhs3LjKIfqb"  # Замените YOUR_SECRET_KEY на ваш ранее полученный secret key
-    )
+    url = "https://www.google.com/recaptcha/api/siteverify"
+    data = {
+        "secret": SECRET_KEY,
+        "response": response
+    }
+    r = requests.post(url, data=data)
+    result = r.json()
 
-    if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-        return HTMLResponse(content="Invalid token", status_code=400)
-
-    if idinfo['aud'] != "6LfNj0kpAAAAAOT_vhcGzdK_4xds1Ikw4CK0qBbD":  # Замените YOUR_SITE_KEY на ваш ранее полученный site key
-        return HTMLResponse(content="Invalid token", status_code=400)
-
-    return HTMLResponse(content="Success")
+    if result["success"]:
+        # Вернуть страницу с обработкой изображения
+        return templates.TemplateResponse("forms.html", {"request": request})
+    else:
+        # Вернуть страницу с ошибкой проверки
+        return templates.TemplateResponse("error.html", {"request": request})
 
 
 @app.post("/image_form", response_class=HTMLResponse)
@@ -63,7 +57,6 @@ async def make_image(request: Request,
                      files: List[UploadFile] = File(description="Multiple files as UploadFile")
                      ):
     # устанавливаем готовность прорисовки файлов, можно здесь проверить, что файлы вообще есть
-    # лучше использовать исключения
     ready = False
     print(len(files))
     if (len(files) > 0):
