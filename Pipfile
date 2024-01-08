@@ -15,7 +15,7 @@ python-multipart = "*"
 matplotlib = "*"
 app = "*"
 requests = "*"
-google = "*"
+id_token = "*"
 
 [dev-packages]
 
