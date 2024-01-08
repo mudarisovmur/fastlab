@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Form, File, UploadFile
+import matplotlib.pyplot as plt
 from typing import List
 import hashlib
 from PIL import ImageDraw
@@ -154,6 +155,33 @@ async def make_image(request: Request,
         p_images[i] = newOutputImage
 
         p_images[i].save("./" + images[i], 'JPEG')
+
+    # Преобразуем изображение в массив numpy
+    image_array = np.array(p_images[0])
+
+    # Извлекаем значения красного (R), зеленого (G) и синего (B) каналов
+    red_channel = image_array[:, :, 0]
+    green_channel = image_array[:, :, 1]
+    blue_channel = image_array[:, :, 2]
+
+    # Вычисляем распределение цветов
+    red_hist = np.histogram(red_channel, bins=256, range=(0, 255))
+    green_hist = np.histogram(green_channel, bins=256, range=(0, 255))
+    blue_hist = np.histogram(blue_channel, bins=256, range=(0, 255))
+
+    # Координаты для гистограммы
+    bin_centers = red_hist[1][:-1]
+
+    # Строим графики
+    plt.figure(figsize=(10, 6))
+    plt.plot(bin_centers, red_hist[0], color='red', label='Red')
+    plt.plot(bin_centers, green_hist[0], color='green', label='Green')
+    plt.plot(bin_centers, blue_hist[0], color='blue', label='Blue')
+    plt.xlabel('Значение пикселя')
+    plt.ylabel('Частота')
+    plt.title('Распределение цветов')
+    plt.legend()
+    plt.show()
 
     # возвращаем html с параметрами-ссылками на изображения, которые позже будут
     # извлечены браузером запросами get по указанным ссылкам в img src
