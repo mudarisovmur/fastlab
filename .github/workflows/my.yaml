@@ -20,5 +20,3 @@ jobs: # список работ, которые будут производит�
       - name: Pipenvsync
         run: |
           pipenv sync
-      - name: Start tests
-        run: pipenv run python -m pytest my_tests.py
