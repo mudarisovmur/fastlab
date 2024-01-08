@@ -10,6 +10,7 @@ from fastapi import Form, File, UploadFile
 # Для капчи
 from fastapi.responses import HTMLResponse
 from fastapi import Depends
+import google
 from google.auth.transport import requests
 from google.oauth2 import id_token
 
